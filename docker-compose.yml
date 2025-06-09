@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: artisign-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./models:/usr/src/app/models
+      - ./uploads:/usr/src/app/uploads
+      - ./temp:/usr/src/app/temp
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
