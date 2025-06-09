@@ -46,5 +46,14 @@ module.exports = {
     maxFileSize: 50 * 1024 * 1024, // 50MB
     allowedImageTypes: ['image/jpeg', 'image/jpg', 'image/png'],
     allowedVideoTypes: ['video/mp4', 'video/avi', 'video/quicktime']
+  },
+  
+  // Realtime settings
+  realtime: {
+    sessionTimeout: 60 * 60 * 1000, // 1 hour
+    stableFrameThreshold: 5, // Frames required for stable detection
+    movementThreshold: 0.03, // Threshold for motion detection
+    minSequenceFrames: 15, // Minimum frames for a valid sequence
+    confidenceThreshold: 0.7 // Minimum confidence for prediction
   }
 };

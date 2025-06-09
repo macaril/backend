@@ -2,6 +2,7 @@
 
 const Hapi = require('@hapi/hapi');
 const Inert = require('@hapi/inert');
+const Nes = require('@hapi/nes');
 const Path = require('path');
 const Fs = require('fs');
 
@@ -10,6 +11,7 @@ const config = require('./config');
 const routes = require('./routes');
 const logger = require('./utils/logger');
 const modelHandler = require('./handlers/modelHandler');
+const realtimeHandler = require('./handlers/realtimeHandler');
 
 // Create directories if they don't exist
 [
@@ -32,7 +34,7 @@ const init = async () => {
     routes: {
       cors: {
         origin: ['*'],
-        headers: ['Accept', 'Content-Type'],
+        headers: ['Accept', 'Content-Type', 'Authorization'],
         additionalHeaders: ['X-Requested-With']
       },
       files: {
@@ -43,11 +45,18 @@ const init = async () => {
 
   // Register plugins
   await server.register([
-    Inert
+    Inert,
+    { plugin: Nes, options: { auth: false } }
   ]);
 
   // Register routes
   server.route(routes);
+
+  // Setup WebSocket subscriptions
+  server.subscription('/realtime/sign/{userId}');
+  
+  // Initialize realtime handler
+  realtimeHandler.init(server);
 
   // Error handling
   server.ext('onPreResponse', (request, h) => {
