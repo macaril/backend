@@ -1,7 +1,7 @@
 'use strict';
 
 const Boom = require('@hapi/boom');
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const modelHandler = require('../handlers/modelHandler');
 const logger = require('../utils/logger');
 

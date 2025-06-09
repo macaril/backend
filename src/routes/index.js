@@ -7,7 +7,8 @@ const dynamicSignRoutes = require('./dynamicSignRoutes');
 const textRoutes = require('./textRoutes');
 const uploadRoutes = require('./uploadRoutes');
 const testRoutes = require('./testRoutes');
-const simplifiedRoutes = require('./simplifiedRoutes'); // Pastikan ini ada
+const simplifiedRoutes = require('./simplifiedRoutes');
+const realtimeRoutes = require('./realtimeRoutes');
 
 // Root route
 const rootRoute = {
@@ -31,15 +32,29 @@ const staticFilesRoute = {
   }
 };
 
+// Model files route for client-side model loading
+const modelFilesRoute = {
+  method: 'GET',
+  path: '/models/{param*}',
+  handler: {
+    directory: {
+      path: '../models',
+      redirectToSlash: true
+    }
+  }
+};
+
 // Combine all routes
 module.exports = [
   rootRoute,
   staticFilesRoute,
+  modelFilesRoute,
   ...healthRoutes,
   ...staticSignRoutes,
   ...dynamicSignRoutes,
   ...textRoutes,
   ...uploadRoutes,
   ...testRoutes,
-  ...simplifiedRoutes // Pastikan ini ada
+  ...simplifiedRoutes,
+  ...realtimeRoutes
 ];

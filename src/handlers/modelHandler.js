@@ -12,8 +12,19 @@ const imageClassMapping = {
 
 const videoClassMapping = {
   "0": "Apa", "1": "Apa Kabar", "2": "Bagaimana", "3": "Baik", "4": "Belajar", "5": "Berapa",
-  "6": "Berdiri", "7": "Bingung", "8": "Dia", "9": "Dimana", "10": "Duduk", "11": "Halo"
+  "6": "Berdiri", "7": "Bingung", "8": "Dia", "9": "Dimana", "10": "Duduk", "11": "Halo",
+  "12": "Kalian", "13": "Kami", "14": "Kamu", "15": "Kapan", "16": "Kemana", "17": "Kita",
+  "18": "Makan", "19": "Mandi", "20": "Marah", "21": "Melihat", "22": "Membaca", "23": "Menulis",
+  "24": "Mereka", "25": "Minum", "26": "Pendek", "27": "Ramah", "28": "Sabar", "29": "Saya",
+  "30": "Sedih", "31": "Selamat Malam", "32": "Selamat Pagi", "33": "Selamat Siang",
+  "34": "Selamat Sore", "35": "Senang", "36": "Siapa", "37": "Terima Kasih", "38": "Tidur",
+  "39": "Tinggi"
 };
+
+// Mock status for models
+let landmarkModel = true;
+let videoLstmModel = true;
+let videoTransformerModel = true;
 
 /**
  * Load all models and class mappings
@@ -56,7 +67,6 @@ async function predictStaticSign(landmarks) {
     };
   }
 }
-
 /**
  * Predict dynamic sign (word) from landmark sequence - Pure dummy implementation
  * @param {Array} landmarkSequence - Array of landmark arrays
@@ -100,21 +110,48 @@ function textToSign(text) {
   const result = [];
   
   for (const word of words) {
-    if (word === 'halo') {
+    // Check if word exists in video class mapping (known words)
+    let isKnownWord = false;
+    let mappedWord = word;
+    
+    for (const [key, value] of Object.entries(videoClassMapping)) {
+      if (value.toLowerCase() === word) {
+        isKnownWord = true;
+        mappedWord = value; // Use the exact case from the mapping
+        break;
+      }
+    }
+    
+    if (isKnownWord) {
+      // Known word - can be represented as a single sign
       result.push({
         type: 'word',
         original: word,
-        mapped: 'Halo',
+        mapped: mappedWord,
         knownInDataset: true
       });
     } else {
+      // Unknown word - needs to be fingerspelled
       const letters = [];
       
       for (const letter of word) {
+        // Check if we have this letter in our image classes
+        let letterExists = false;
+        let mappedLetter = letter.toUpperCase();
+        
+        // Look through the image class mapping for this letter
+        for (const [key, value] of Object.entries(imageClassMapping)) {
+          if (value.toLowerCase() === letter.toLowerCase()) {
+            letterExists = true;
+            mappedLetter = value; // Use the exact case from the mapping
+            break;
+          }
+        }
+        
         letters.push({
           letter: letter,
-          mapped: letter.toUpperCase(),
-          exists: true
+          mapped: mappedLetter,
+          exists: letterExists
         });
       }
       
